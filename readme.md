@@ -38,8 +38,21 @@ _Explanation_ -- a statement or account that makes something clear. #sorry
 
 ### X's & O's poses arrays
 
-game records [sample](sample.txt)
 ```
++-----+ xs = [0];  +-----+ xs = [0]; +-----+ xs = [0,8]; +-----+ xs = [0,8];
+|x| | |            |x| | | os = [4]; |x| | | os = [4];   |x|o| | os = [4,1];
+| | | |            | |o| |           | |o| |             | |o| |
+| | | |            | | | |           | | |x|             | | |x|
++-----+            +-----+           +-----+             +-----+
+
++-----+ xs = [0,8,6];  +-----+ xs = [0,8,6];
+|x|o| | os = [4,2];    |x|o| | os = [4,1,7];
+| |o| |                | |o| |
+|x| |x|                |x|o|x|
++-----+                +-----+
+
+---------------------------------------------------------
+
 wins = [
   // horizontals
   [0,1,2],
@@ -66,6 +79,8 @@ Comparing wins with sorted records after records have at least 3 pieces
 # AI
 
 I am not sure about this, but let me try... 
+
+----------------------------------------------------------------------
 
 <!-- Please don't remove this: Grab your social icons from https://github.com/carlsednaoui/gitsocial -->
 

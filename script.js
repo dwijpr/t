@@ -11,20 +11,23 @@ function getClickedElement(e) {
     console.error("can't find element!");
 }
 
-var Game = function () {
-    var self = this;
-
+function initBlocks() {
     var blocks = board.getElementsByTagName('td');
     for (var i = 0;i < blocks.length; i++) {
         var td = blocks[i];
         td.dataId = i;
     }
+}
+
+var Game = function () {
+    var self = this;
 
     var STATE_INIT	    = 0;
     var STATE_PLAYING	= STATE_INIT + 1;
     var STATE_END       = STATE_PLAYING + 1;
 
     this.state = STATE_INIT;
+    initBlocks();
 
     var x = "X", o = "O";
     var current = x;
