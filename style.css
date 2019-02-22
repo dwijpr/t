@@ -14,3 +14,9 @@
     height: 64px;
     text-align: center;
 }
+
+#convos {
+    position: fixed;
+    left: 256px;
+    top: 32px;
+}

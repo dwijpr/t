@@ -18,17 +18,52 @@ _Explanation_ -- a statement or account that makes something clear. #sorry
 [Game] -> Nigiri (in Go/Baduk/Weiqi) [Play Go with me](https://online-go.com/player/588586/) / Randomize turn
 ---> player/AI turn ---> turn based game ---> are there 3 connected pieces? 
 
-`- no  ---> Play till death! (fill all 9 blocks)
+`- no  ---> Play till death! (fill all 9 blocks) ---> [End]
 
-`- yes ---> End Game ---> Restart? ---> backTo: [User]
+`- yes ---> [End]
+
+[End] ---> Restart? ---> backTo: [User]
+
+# Additional Feature: Convos Battle!
+
+tracking each other pieces as persons would...
+
+```
++-----+                     
+| | | | -----------------
+| |x| | | enable convos |
+| | | | -----------------
++-----+ 
+
++-----+ O : "What? Tengen!";
+| | | | X : "Hahaha! Awesome right?";
+| |x| | 
+| | | | 
++-----+ 
+
++-----+ O : "What? Tengen!";
+| | |o| X : "Hahaha! Awesome right?";
+| |x| | O : "Alright... here I go, _San San_!";
+| | | | X : "Naaaniii!??!;
++-----+ 
+
+```
 
 [repl.it](https://repl.it/@dwijpr/t) <--- it's awesome, first time using it!
 
 # The Game without AI
 
-[User] ---> Browser ---> Game ---> 'X' and 'O' Take Turn ---> Game check if there are 3 connected dots vertical, horizontal, diagonal ---> Game Restart menu ---> [User]
+[User] ---> Browser
+---> Game ---> 'X' and 'O' Take Turn
+---> Game check if:
+`---> there are 3 connected dots vertical, horizontal,
+  diagonal
+`---> all the blocks is filled!
+---> Game Restart menu ---> [User]
 
 ## 3 connected dots
+
+
 
 ### board (table element) index
 
