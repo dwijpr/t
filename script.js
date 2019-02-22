@@ -56,6 +56,35 @@ function fConvos(piece, turn) {
 }
 
 function debugPieces(turn, pieces) {
+    var wins = [
+        // horizontals
+        [0,1,2],
+        [3,4,5],
+        [6,7,8],
+        // verticals
+        [0,3,6],
+        [1,4,7],
+        [2,5,6],
+        // diagonals
+        [0,4,8],
+        [2,4,6],
+    ];
+
+    var nodes = {};
+
+    for (var i = 0; i < wins.length; i++) {
+        for (var j = 0; j < wins[i].length; j++) {
+            var v = wins[i][j];
+            if (nodes[v] == undefined) {
+                nodes[v] = 0;
+            } else {
+                nodes[v] += 1;
+            }
+        }
+    }
+
+    console.log(nodes);
+
     console.log('--------------------------------------');
     console.log('turn', turn);
     for (var k in pieces) {
