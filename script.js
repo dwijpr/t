@@ -1,3 +1,61 @@
+var Possibility = function(turn, pieces, moves) {
+    var wins = [
+        // horizontals
+        [0,1,2],
+        [3,4,5],
+        [6,7,8],
+        // verticals
+        [0,3,6],
+        [1,4,7],
+        [2,5,6],
+        // diagonals
+        [0,4,8],
+        [2,4,6],
+    ];
+
+    var available = [];
+    var blocks = board.getElementsByTagName('td');
+    for (var i = 0; i < blocks.length; i++) {
+        var block = blocks[i];
+        if (block.clicked) {
+            continue;
+        }
+        available.push(block.dataId);
+    }
+
+    for (var k in pieces) {
+        for (var i = 0; i < pieces[k].length; i++) {
+            var piece = pieces[k][i];
+            console.log('piece', piece);
+        }
+    }
+
+    var nodes = {};
+    var availableText = '';
+    for (var i = 0; i < available.length; i++) {
+        availableText += ', ' + available[i];
+    }
+    console.log(availableText);
+
+    for (var i = 0; i < wins.length; i++) {
+        for (var j = 0; j < wins[i].length; j++) {
+            var v = wins[i][j];
+            if (nodes[v] == undefined) {
+                nodes[v] = 1;
+            } else {
+                nodes[v] += 1;
+            }
+        }
+    }
+
+    if (moves == 0) {
+        return {
+            "info": "get the node with the biggest poin"
+            + " 4:4, 6:4 "
+        };
+    }
+};
+
 function getClickedElement(e) {
     if (e.path) { // chrome
         return e.path[0];
@@ -26,7 +84,40 @@ function initBlocks() {
 var Check = new function () {
     var self = this;
 
+    this.compare = function(pieces, win) {
+        var count = 0;
+        console.log(pieces, win);
+        for (var i = 0; i < pieces.length; i++) {
+            var piece = pieces[i];
+            var index = win.indexOf(piece);
+            if (index !== -1) win.splice(index, 1);
+        }
+        if (win.length == 0) return true;
+        return false;
+    };
+
     this.process = function (pieces) {
+        for (var k in pieces) {
+            if (pieces[k].length < 3) continue;
+            var wins = [
+                // horizontals
+                [0,1,2],
+                [3,4,5],
+                [6,7,8],
+                // verticals
+                [0,3,6],
+                [1,4,7],
+                [2,5,6],
+                // diagonals
+                [0,4,8],
+                [2,4,6],
+            ];
+            for (var i = 0; i < wins.length; i++) {
+                if (self.compare(pieces[k], wins[i]))
+                    return true;
+            }
+        }
+        return false;
     };
 
     return self;
@@ -55,38 +146,11 @@ function fConvos(piece, turn) {
     }
 }
 
-function debugPieces(turn, pieces) {
-    var wins = [
-        // horizontals
-        [0,1,2],
-        [3,4,5],
-        [6,7,8],
-        // verticals
-        [0,3,6],
-        [1,4,7],
-        [2,5,6],
-        // diagonals
-        [0,4,8],
-        [2,4,6],
-    ];
-
-    var nodes = {};
-
-    for (var i = 0; i < wins.length; i++) {
-        for (var j = 0; j < wins[i].length; j++) {
-            var v = wins[i][j];
-            if (nodes[v] == undefined) {
-                nodes[v] = 1;
-            } else {
-                nodes[v] += 1;
-            }
-        }
-    }
-
-    console.log(nodes);
+function debugPieces(turn, pieces, moves) {
+    var posibility = new Possibility(turn, pieces, moves);
 
     console.log('--------------------------------------');
-    console.log('turn', turn);
+    console.log('turn', turn, ' # ', moves);
     for (var k in pieces) {
         var _pieces = pieces[k];
         var __pieces = '';
@@ -97,6 +161,8 @@ function debugPieces(turn, pieces) {
         }
         console.log(k, __pieces);
     }
+    console.log('--------------------------------------');
+    console.log('posibilities: ', posibility);
     console.log('--------------------------------------');
 }
 
@@ -131,11 +197,6 @@ var Game = function () {
         };
     };
 
-    this.check = function (pieces) {
-        Check.process(pieces);
-        return false;
-    };
-
     this.setState = function (state) {
         self.state = state;
         switch (state) {
@@ -145,7 +206,10 @@ var Game = function () {
         }
     };
 
-    this.add = function (td) {
+    debugPieces(current, pieces, moves);
+
+    this.add = function (td, isAI) {
+        if (isAI) playerTurn = true;
         if (self.state == STATE_END) {
             return;
         }
@@ -155,20 +219,28 @@ var Game = function () {
             pieces[current].push(td.dataId);
             pieces[current].sort();
             moves++;
+
+            //find out winner
+            if (Check.process(pieces)) {
+                info.innerHTML = "Horay!";
+                self.setState(STATE_END);
+                return;
+            }
+            //all blocks is filled
             if (moves == 9) {
                 info.innerHTML = "Death!";
                 self.setState(STATE_END);
                 return;
             }
-            if (pieces[current].length > 2) {
-                if (self.check(pieces[current])) {
-                    info.innerHTML = "Horay!";
-                    return;
-                }
-            }
             current = current==x?o:x;
-            debugPieces(current, pieces);
+            debugPieces(current, pieces, moves);
             info.innerHTML = "player "+current+" turn";
+
+            if (!isAI) {
+                setTimeout(function () {
+                    AI.move(self);
+                }, 1000);
+            }
         }
     };
     return this;
@@ -176,8 +248,38 @@ var Game = function () {
 
 var game = new Game();
 
+var AI = new function () {
+    var self = this;
+
+    this.move = function (game) {
+        var available = [];
+        var blocks = board.getElementsByTagName('td');
+        for (var i = 0; i < blocks.length; i++) {
+            var block = blocks[i];
+            if (block.clicked) {
+                continue;
+            }
+            game.add(block, true);
+            break;
+        }
+    };
+
+    return self;
+};
+
+var playerTurn = Math.round(Math.random());
+
+if (!playerTurn) {
+    info.innerHTML = 'AI Turn';
+    setTimeout(function () {
+        AI.move(game);
+    }, 1000);
+}
+
 board.onclick = function(e) {
-    game.add(getClickedElement(e))
+    if (playerTurn) {
+        game.add(getClickedElement(e))
+    }
 };
 restart.onclick = function() {
     game.restart();
@@ -190,7 +292,6 @@ enableConvos.onclick = function() {
 
 
 /*
-var turn = Math.round(Math.random());
 
 var Board = new function() {
     var blocks = board.getElementsByTagName('td');

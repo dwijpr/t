@@ -57,14 +57,32 @@ tracking each other pieces as persons would...
 [User] ---> Browser
 ---> Game ---> 'X' and 'O' Take Turn
 ---> Game check if:
-`---> there are 3 connected dots vertical, horizontal,
-  diagonal
-`---> all the blocks is filled!
+  `---> there are 3 connected dots vertical, horizontal,
+    diagonal
+  `---> all the blocks is filled!
 ---> Game Restart menu ---> [User]
 
 ## 3 connected dots
 
+### Possibility
 
+```
+0 1 2
+3 4 5
+6 7 8
+
+// horizontals
+[0,1,2],
+[3,4,5],
+[6,7,8],
+// verticals
+[0,3,6],
+[1,4,7],
+[2,5,6],
+// diagonals
+[0,4,8],
+[2,4,6],
+```
 
 ### board (table element) index
 
