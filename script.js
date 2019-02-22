@@ -10,20 +10,40 @@ function getClickedElement(e) {
     }
     console.error("can't find element!");
 }
-var x = "X", o = "O";
-var current = x;
-board.onclick = function(e) {
-    var td = getClickedElement(e);
-    console.log(td);
-    if (td && !td.clicked) {
-        td.clicked = true;
-        td.innerText = current;
-        current = current==x?o:x;
-    }
+
+var Game = function (board) {
+    var self = this;
+
+    var STATE_INIT	= 0;
+    var STATE_PLAYING	= STATE_INIT + 1;
+
+    var state = STATE_INIT;
+
+    var x = "X", o = "O";
+    var current = x;
+
+    info.innerHTML = "Hi! Welcome to the game."
+	+ "Click a square among 9 to start the game...";
+
+    this.add = function (td) {
+	if (td && !td.clicked) {
+	    td.clicked = true;
+	    td.innerText = current;
+	    current = current==x?o:x;
+	    info.innerHTML = "player "+current+" turn";
+	}
+    };
+    return this;
 };
 
+var game = new Game(board);
+console.log(game);
+
+board.onclick = function(e) {game.add(getClickedElement(e))};
+
+
+/*
 var turn = Math.round(Math.random());
-console.log(turn);
 
 var Board = new function() {
     var blocks = board.getElementsByTagName('td');
@@ -41,3 +61,4 @@ var AI = new function() {
 if (turn) {
     AI.start();
 }
+*/

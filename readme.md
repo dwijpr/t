@@ -11,16 +11,28 @@ _FlowChart_ -- a diagram of the sequence of movements or actions of people or th
 
 _Explanation_ -- a statement or account that makes something clear. #sorry
 
-# Flow Chart
+# Flow Chart - App
 
 [User] ---> Open the program in a beloved Browser (me, Chromium currently - i need to run ```chromium --password-store=basic``` each run though) ---> play the [Game]!
 
 [Game] -> Nigiri (in Go/Baduk/Weiqi) [Play Go with me](https://online-go.com/player/588586/) / Randomize turn
 ---> player/AI turn ---> turn based game ---> are there 3 connected pieces? 
+
 `- no  ---> Play till death! (fill all 9 blocks)
+
 `- yes ---> End Game ---> Restart? ---> backTo: [User]
 
 [repl.it](https://repl.it/@dwijpr/t) <--- it's awesome, first time using it!
+
+# The Game without AI
+
+[User] ---> Browser ---> Game ---> 'X' and 'O' Take Turn ---> Game check if there are 3 connected dots vertical, horizontal, diagonal ---> Game Restart menu ---> [User]
+
+# AI
+
+I am not sure about this, but let me try... 
+
+
 
 <!-- Please don't remove this: Grab your social icons from https://github.com/carlsednaoui/gitsocial -->
 
