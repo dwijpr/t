@@ -16,6 +16,8 @@ function initBlocks() {
     for (var i = 0;i < blocks.length; i++) {
         var td = blocks[i];
         td.dataId = i;
+        td.innerHTML = '';
+        td.clicked = false;
     }
 }
 
@@ -31,6 +33,7 @@ var Game = function () {
 
     var x = "X", o = "O";
     var current = x;
+    var moves = 0;
 
     info.innerHTML = "Hi! Welcome to the game."
 	+ "Click a square among 9 to start the game...";
@@ -38,6 +41,11 @@ var Game = function () {
     var pieces = {
         "X": [],
         "O": [],
+    };
+
+    this.restart = function () {
+        initBlocks();
+        self.setState(STATE_INIT);
     };
 
     this.check = function (pieces) {
@@ -56,17 +64,14 @@ var Game = function () {
             6: [[6,7,8]],
         };
         var _wins = wins[pieces[0]];
-        console.log(pieces, _wins);
         if (_wins != undefined)
         for (var i = 0; i < _wins.length; i++) {
             var count = 0;
             for (var j = 0; j < _wins[i].length; j++) {
                 var index = pieces.indexOf(_wins[i][j]);
-                console.log('index', index);
                 if (index > -1) count++;
                 if (count == 3) {
-                    console.log('win', _wins[i], pieces);
-                    self.state = STATE_END;
+                    self.setState(STATE_END);
                     return true;
                 }
             }
@@ -74,13 +79,30 @@ var Game = function () {
         return false;
     };
 
+    this.setState = function (state) {
+        self.state = state;
+        switch (state) {
+            case STATE_END:
+                restart.style.display = 'block';
+                break;
+        }
+    };
+
     this.add = function (td) {
-        if (self.state == STATE_END) return;
+        if (self.state == STATE_END) {
+            return;
+        }
         if (td && !td.clicked) {
             td.clicked = true;
             td.innerText = current;
             pieces[current].push(td.dataId);
             pieces[current].sort();
+            moves++;
+            if (moves == 9) {
+                info.innerHTML = "Death!";
+                self.setState(STATE_END);
+                return;
+            }
             if (pieces[current].length > 2) {
                 if (self.check(pieces[current])) {
                     info.innerHTML = "Horay!";
@@ -95,10 +117,13 @@ var Game = function () {
 };
 
 var game = new Game();
-console.log(game);
 
 board.onclick = function(e) {
+    console.log("board clicked!", e);
     game.add(getClickedElement(e))
+};
+restart.onclick = function() {
+    game.restart();
 };
 
 
