@@ -50,6 +50,7 @@ tracking each other pieces as persons would...
 ```
 
 [repl.it](https://repl.it/@dwijpr/t) <--- it's awesome, first time using it!
+**note** there is some errors: probably not using repl.it
 
 # The Game without AI
 
