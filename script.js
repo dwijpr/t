@@ -76,7 +76,7 @@ function debugPieces(turn, pieces) {
         for (var j = 0; j < wins[i].length; j++) {
             var v = wins[i][j];
             if (nodes[v] == undefined) {
-                nodes[v] = 0;
+                nodes[v] = 1;
             } else {
                 nodes[v] += 1;
             }
@@ -89,11 +89,13 @@ function debugPieces(turn, pieces) {
     console.log('turn', turn);
     for (var k in pieces) {
         var _pieces = pieces[k];
+        var __pieces = '';
         for (var i = 0; i < _pieces.length; i++) {
             var piece = _pieces[i];
             fConvos(piece, turn);
-            console.log(turn, k, piece);
+            __pieces += ', '+piece;
         }
+        console.log(k, __pieces);
     }
     console.log('--------------------------------------');
 }
