@@ -28,11 +28,44 @@ _Explanation_ -- a statement or account that makes something clear. #sorry
 
 [User] ---> Browser ---> Game ---> 'X' and 'O' Take Turn ---> Game check if there are 3 connected dots vertical, horizontal, diagonal ---> Game Restart menu ---> [User]
 
+## 3 connected dots
+
+### board (table element) index
+
+0 1 2
+3 4 5
+6 7 8
+
+### X's & O's poses arrays
+
+game records [sample](sample.txt)
+```
+wins = [
+  // horizontals
+  [0,1,2],
+  [3,4,5],
+  [6,7,8],
+  // verticals
+  [0,3,6],
+  [1,4,7],
+  [2,5,6],
+  // diagonals
+  [0,4,8],
+  [2,4,6],
+];
+```
+
+### Sorted game records
+
+```
+xs = [0, 6, 8];
+os = [1, 4, 7];
+```
+Comparing wins with sorted records after records have at least 3 pieces
+
 # AI
 
 I am not sure about this, but let me try... 
-
-
 
 <!-- Please don't remove this: Grab your social icons from https://github.com/carlsednaoui/gitsocial -->
 
