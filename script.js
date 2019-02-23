@@ -190,6 +190,13 @@ var Game = function () {
         "O": [],
     };
 
+    this.getPieces = function () {
+        return pieces;
+    };
+    this.getMove = function () {
+        return moves;
+    };
+
     this.restart = function () {
         initBlocks();
         self.setState(STATE_INIT);
@@ -200,6 +207,18 @@ var Game = function () {
             "X": [],
             "O": [],
         };
+
+        // random between 0 and 1
+        //var playerTurn = Math.round(Math.random());
+        var playerTurn = 0;
+
+        if (!playerTurn) {
+            ai.setChar('X');
+            info.innerHTML = ai.name + ' Turn';
+            setTimeout(function () {
+                ai.move(game);
+            }, 1000);
+        }
     };
 
     this.setState = function (state) {
@@ -242,6 +261,7 @@ var Game = function () {
             info.innerHTML = "player "+current+" turn";
 
             if (!isAI) {
+                ai.setChar(current);
                 info.innerHTML = ai.name + " turn";
                 setTimeout(function () {
                     ai.move(self);
@@ -277,13 +297,120 @@ var AI = new function () {
     return self;
 };
 
+// Random Class
+// -------------------------------
+
+var Random = new function () {
+    var self = this;
+
+    this.array = function (items) {
+        console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+        console.log("items ", items);
+        var count = items.length;
+        var rand = Math.floor(Math.random() * count);
+        console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+        console.log("random number: ", rand);
+        return items[rand];
+    };
+
+    return self;
+};
+
+var CheckOne = new function () {
+    var self = this;
+
+    this.compare = function(pieces, win, available) {
+        var originalWin = win.slice();
+        var count = 0;
+        console.log(pieces, win);
+        for (var i = 0; i < pieces.length; i++) {
+            var piece = pieces[i];
+            var index = win.indexOf(piece);
+            if (index !== -1) win.splice(index, 1);
+        }
+        if (win.length == 1) {
+            var last = win[0];
+            console.log('-----------------------------');
+            console.log(' win ', win);
+            console.log(' win for ', originalWin);
+            console.log(' last piece ', last);
+            var index = available.indexOf(last);
+            if (index !== -1)
+                return last;
+        }
+        return -1;
+    };
+
+    this.process = function (available, pieces) {
+        var wins = [
+            // horizontals
+            [0,1,2],
+            [3,4,5],
+            [6,7,8],
+            // verticals
+            [0,3,6],
+            [1,4,7],
+            [2,5,8],
+            // diagonals
+            [0,4,8],
+            [2,4,6],
+        ];
+        for (var i = 0; i < wins.length; i++) {
+            var id = self.compare(
+                pieces, wins[i], available
+            );
+            if (id != -1) return id;
+        }
+        return -1;
+    };
+
+    return self;
+};
+
+function tryToWin(theChar, available, game) {
+    console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+    var pieces = game.getPieces();
+    var myPieces = pieces[theChar];
+
+    // Available to win
+    var id = CheckOne.process(available, myPieces);
+    return id;
+}
+
+function preventOther(theChar, available, game) {
+    console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    var pieces = game.getPieces();
+    var myPieces = pieces[theChar];
+    var enemyChar = theChar=='X'?'O':'X';
+    var enemyPieces = pieces[enemyChar];
+
+    // Available to win
+    var id = CheckOne.process(available, enemyPieces);
+
+    console.log(
+        '-----------------------------------------'
+        , 'ID', id
+        ,'theChar', theChar
+        ,'available', available
+        , myPieces, enemyPieces
+    );
+
+    if (id == -1)
+        id = Random.array(available);
+    return id;
+}
+
 // Singleton Jon AI
 // ----------------
 
 var JonAI = new function () {
     var self = this;
+    var p;
     this.name = "Jon AI";
 
+    this.setChar = function (v) {
+        p = v;
+    };
     this.move = function (game) {
         var available = [];
         var blocks = board.getElementsByTagName('td');
@@ -292,9 +419,36 @@ var JonAI = new function () {
             if (block.clicked) {
                 continue;
             }
-            game.add(block, true, self);
-            break;
+            available.push(block.dataId);
         }
+        console.log("+++++++++++++++++++++++++++++++++++");
+        console.log(" available: ", available);
+        var id = -1;
+        var move = game.getMove();
+        console.log("+++++++++++++++++++++++++++++++++++");
+        console.log(" move: ", move);
+
+        switch (move) {
+            case 0:
+            case 1:
+            case 2:
+                id = Random.array(available);
+                break;
+            case 3:
+                id = preventOther(p, available, game);
+                break;
+            case 4:
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+                id = tryToWin(p, available, game);
+                if (id == -1)
+                    id = preventOther(p, available, game);
+                break;
+        }
+
+        game.add(blocks[id], true, self);
     };
 
     return self;
@@ -302,10 +456,11 @@ var JonAI = new function () {
 
 // random between 0 and 1
 //var playerTurn = Math.round(Math.random());
-var playerTurn = 1;
+var playerTurn = 0;
 
 var ai = JonAI;
 if (!playerTurn) {
+    ai.setChar('X');
     info.innerHTML = ai.name + ' Turn';
     setTimeout(function () {
         ai.move(game);
