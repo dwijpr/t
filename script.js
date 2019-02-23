@@ -209,8 +209,8 @@ var Game = function () {
         };
 
         // random between 0 and 1
-        //var playerTurn = Math.round(Math.random());
-        var playerTurn = 0;
+        var playerTurn = Math.round(Math.random());
+        //var playerTurn = 0;
 
         if (!playerTurn) {
             ai.setChar('X');
@@ -455,8 +455,8 @@ var JonAI = new function () {
 };
 
 // random between 0 and 1
-//var playerTurn = Math.round(Math.random());
-var playerTurn = 0;
+var playerTurn = Math.round(Math.random());
+//var playerTurn = 0;
 
 var ai = JonAI;
 if (!playerTurn) {
