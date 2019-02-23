@@ -134,6 +134,20 @@ Comparing wins with sorted records after records have at least 3 pieces
 
 I am not sure about this, but let me try... 
 
+## Using Scoring System [pending]
+
+## AI - Jon
+
+1. Random(available)
+2. Random(available)
+3. Random(available)
+4. Prevent enemy Win, Random(available)
+5. Check game, Prevent enemy Win, Random(available)
+6. Check game, Prevent enemy Win, Random(available)
+7. Check game, Prevent enemy Win, Random(available)
+8. Check game, Prevent enemy Win, Random(available)
+9. Check game, Prevent enemy Win, Random(available)
+
 ----------------------------------------------------------------------
 
 <!-- Please don't remove this: Grab your social icons from https://github.com/carlsednaoui/gitsocial -->
