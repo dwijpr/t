@@ -7,7 +7,7 @@ var Possibility = function(turn, pieces, moves) {
         // verticals
         [0,3,6],
         [1,4,7],
-        [2,5,6],
+        [2,5,8],
         // diagonals
         [0,4,8],
         [2,4,6],
@@ -85,6 +85,7 @@ var Check = new function () {
     var self = this;
 
     this.compare = function(pieces, win) {
+        var originalWin = win.slice();
         var count = 0;
         console.log(pieces, win);
         for (var i = 0; i < pieces.length; i++) {
@@ -92,7 +93,11 @@ var Check = new function () {
             var index = win.indexOf(piece);
             if (index !== -1) win.splice(index, 1);
         }
-        if (win.length == 0) return true;
+        if (win.length == 0) {
+            console.log('-----------------------------');
+            console.log(' win for ', originalWin);
+            return true;
+        }
         return false;
     };
 
@@ -107,7 +112,7 @@ var Check = new function () {
                 // verticals
                 [0,3,6],
                 [1,4,7],
-                [2,5,6],
+                [2,5,8],
                 // diagonals
                 [0,4,8],
                 [2,4,6],
@@ -208,7 +213,7 @@ var Game = function () {
 
     debugPieces(current, pieces, moves);
 
-    this.add = function (td, isAI) {
+    this.add = function (td, isAI, ai) {
         if (isAI) playerTurn = true;
         if (self.state == STATE_END) {
             return;
@@ -220,9 +225,9 @@ var Game = function () {
             pieces[current].sort();
             moves++;
 
-            //find out winner
+            // Winner checking
             if (Check.process(pieces)) {
-                info.innerHTML = "Horay!";
+                info.innerHTML = "Game!";
                 self.setState(STATE_END);
                 return;
             }
@@ -237,8 +242,9 @@ var Game = function () {
             info.innerHTML = "player "+current+" turn";
 
             if (!isAI) {
+                info.innerHTML = ai.name + " turn";
                 setTimeout(function () {
-                    AI.move(self);
+                    ai.move(self);
                 }, 1000);
             }
         }
@@ -248,8 +254,12 @@ var Game = function () {
 
 var game = new Game();
 
+// Dummy AI
+// ----------------
+
 var AI = new function () {
     var self = this;
+    this.name = "Dummy";
 
     this.move = function (game) {
         var available = [];
@@ -259,7 +269,7 @@ var AI = new function () {
             if (block.clicked) {
                 continue;
             }
-            game.add(block, true);
+            game.add(block, true, self);
             break;
         }
     };
@@ -267,22 +277,55 @@ var AI = new function () {
     return self;
 };
 
-var playerTurn = Math.round(Math.random());
+// Singleton Jon AI
+// ----------------
 
+var JonAI = new function () {
+    var self = this;
+    this.name = "Jon AI";
+
+    this.move = function (game) {
+        var available = [];
+        var blocks = board.getElementsByTagName('td');
+        for (var i = 0; i < blocks.length; i++) {
+            var block = blocks[i];
+            if (block.clicked) {
+                continue;
+            }
+            game.add(block, true, self);
+            break;
+        }
+    };
+
+    return self;
+};
+
+// random between 0 and 1
+//var playerTurn = Math.round(Math.random());
+var playerTurn = 1;
+
+var ai = JonAI;
 if (!playerTurn) {
-    info.innerHTML = 'AI Turn';
+    info.innerHTML = ai.name + ' Turn';
     setTimeout(function () {
-        AI.move(game);
+        ai.move(game);
     }, 1000);
 }
 
+// Player clicks
+// ----------------------------------------------------
+
 board.onclick = function(e) {
     if (playerTurn) {
-        game.add(getClickedElement(e))
+        game.add(
+            getClickedElement(e)
+            , false, ai
+        );
     }
 };
 restart.onclick = function() {
     game.restart();
+    restart.style.display = 'none';
 };
 enableConvos.onclick = function() {
     console.log('enabling Convos...');
@@ -290,23 +333,3 @@ enableConvos.onclick = function() {
     enableConvos = false;
 };
 
-
-/*
-
-var Board = new function() {
-    var blocks = board.getElementsByTagName('td');
-    this.add = function (i) {
-        blocks[i].click();
-    };
-};
-
-var AI = new function() {
-    this.start = function() {
-        Board.add(4);
-    };
-};
-
-if (turn) {
-    AI.start();
-}
-*/
